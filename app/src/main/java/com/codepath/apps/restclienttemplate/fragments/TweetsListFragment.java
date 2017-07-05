@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,7 @@ public class TweetsListFragment extends Fragment implements TweetAdapter.TweetAd
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // populateTimeline();
+                refreshView();
             }
         });
         // Configure the refreshing colors
@@ -88,9 +89,20 @@ public class TweetsListFragment extends Fragment implements TweetAdapter.TweetAd
         }
     }
 
+    public void addTweet(Tweet tweet) {
+        tweets.add(0, tweet);
+        tweetAdapter.notifyItemInserted(0);
+        rvTweets.scrollToPosition(0);
+    }
+
     @Override
     public void onItemSelected(View view, int position) {
         Tweet tweet = tweets.get(position);
         ((TweetSelectedListener) getActivity()).onTweetSelected(tweet);
     }
+
+    public void refreshView() {
+        Log.i("TWEETS_LIST_FRAGMENT", "Swipe-refreshed");
+    }
+
 }

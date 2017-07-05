@@ -28,6 +28,11 @@ public class MentionsTimelineFragment extends TweetsListFragment {
         populateTimeline();
     }
 
+    @Override
+    public void refreshView() {
+        populateTimeline();
+    }
+
     private void populateTimeline() {
         client.getMentionsTimeline(new JsonHttpResponseHandler() {
 

@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.codepath.apps.restclienttemplate.fragments.HomeTimelineFragment;
 import com.codepath.apps.restclienttemplate.fragments.TweetsListFragment;
 import com.codepath.apps.restclienttemplate.fragments.TweetsPagerAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -16,13 +17,17 @@ public class TimelineActivity extends AppCompatActivity implements
 TweetsListFragment.TweetSelectedListener {
 
     private final int REQUEST_CODE = 42;
+    private ViewPager viewPager;
+    private TweetsPagerAdapter tweetsPagerAdapter;
+    private HomeTimelineFragment homeTimelineFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
-        viewPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager(), this));
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        tweetsPagerAdapter = new TweetsPagerAdapter(getSupportFragmentManager(), this);
+        viewPager.setAdapter(tweetsPagerAdapter);
         // set up the tabLayout to use the ViewPager
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -68,15 +73,15 @@ TweetsListFragment.TweetSelectedListener {
     }
 
     // handle the result of the sub-activity
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
-//            // Extract name value from result extras
-//            Tweet newTweet = data.getExtras().getParcelable("tweet");
-//            tweets.add(0, newTweet);
-//            tweetAdapter.notifyItemInserted(0);
-//            rvTweets.scrollToPosition(0);
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+            // Extract name value from result extras
+            Tweet newTweet = data.getExtras().getParcelable("tweet");
+            homeTimelineFragment = (HomeTimelineFragment) tweetsPagerAdapter.getItem(0);
+            viewPager.setCurrentItem(0);
+            homeTimelineFragment.addTweet(newTweet);
+        }
+    }
 
 }

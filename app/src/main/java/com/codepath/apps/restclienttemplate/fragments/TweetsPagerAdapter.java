@@ -13,6 +13,8 @@ public class TweetsPagerAdapter extends FragmentPagerAdapter {
 
     private String tabTitles[] = new String[] {"Home", "Mentions"};
     private Context context;
+    private HomeTimelineFragment homeTimelineFragment;
+    private MentionsTimelineFragment mentionsTimelineFragment;
 
     public TweetsPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
@@ -28,13 +30,28 @@ public class TweetsPagerAdapter extends FragmentPagerAdapter {
     // return the fragment to use depending on the position
     @Override
     public Fragment getItem(int position) {
-        if (position == 0) {
-            return new HomeTimelineFragment();
-        } else if (position == 1) {
-            return new MentionsTimelineFragment();
-        } else {
-            return null;
+        switch (position) {
+            case 0:
+                return getHomeTimelineFragment();
+            case 1:
+                return getMentionsTimelineFragment();
+            default:
+                return null;
         }
+    }
+
+    private HomeTimelineFragment getHomeTimelineFragment() {
+        if (homeTimelineFragment == null) {
+            homeTimelineFragment = new HomeTimelineFragment();
+        }
+        return homeTimelineFragment;
+    }
+
+    private MentionsTimelineFragment getMentionsTimelineFragment() {
+        if (mentionsTimelineFragment == null) {
+            mentionsTimelineFragment = new MentionsTimelineFragment();
+        }
+        return mentionsTimelineFragment;
     }
 
     // return fragment title to be used for each tab

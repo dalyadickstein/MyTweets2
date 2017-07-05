@@ -28,6 +28,11 @@ public class HomeTimelineFragment extends TweetsListFragment {
         populateTimeline();
     }
 
+    @Override
+    public void refreshView() {
+        populateTimeline();
+    }
+
     private void populateTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
 
