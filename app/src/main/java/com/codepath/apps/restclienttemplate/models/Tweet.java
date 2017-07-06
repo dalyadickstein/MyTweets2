@@ -22,30 +22,7 @@ public class Tweet implements Parcelable {
     public String createdAt;
     public User user;
     public String relativeDate;
-
-    @Override
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeString(body);
-        out.writeLong(uid);
-        out.writeString(createdAt);
-        out.writeString(relativeDate);
-        out.writeParcelable(user, flags);
-    }
-
-    private Tweet(Parcel in) {
-        body = in.readString();
-        uid = in.readLong();
-        createdAt = in.readString();
-        relativeDate = in.readString();
-        user = in.readParcelable(User.class.getClassLoader());
-    }
-
-    public Tweet() {}
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
+    public boolean favorited;
 
     // deserialize the JSON
     public static Tweet fromJSON(JSONObject jsonObject) throws JSONException {
@@ -56,6 +33,7 @@ public class Tweet implements Parcelable {
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
         tweet.relativeDate = getRelativeTimeAgo(jsonObject.getString("created_at"));
+        tweet.favorited = jsonObject.getBoolean("favorited");
         return tweet;
     }
 
@@ -74,21 +52,42 @@ public class Tweet implements Parcelable {
         return relativeDate;
     }
 
-    public static final Parcelable.Creator<Tweet> CREATOR
-    = new Parcelable.Creator<Tweet>() {
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
-        // This simply calls our new constructor (typically private) and
-        // passes along the unmarshalled `Parcel`, and then returns the new object!
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.body);
+        dest.writeLong(this.uid);
+        dest.writeString(this.createdAt);
+        dest.writeParcelable(this.user, flags);
+        dest.writeString(this.relativeDate);
+        dest.writeByte(this.favorited ? (byte) 1 : (byte) 0);
+    }
+
+    public Tweet() {
+    }
+
+    protected Tweet(Parcel in) {
+        this.body = in.readString();
+        this.uid = in.readLong();
+        this.createdAt = in.readString();
+        this.user = in.readParcelable(User.class.getClassLoader());
+        this.relativeDate = in.readString();
+        this.favorited = in.readByte() != 0;
+    }
+
+    public static final Creator<Tweet> CREATOR = new Creator<Tweet>() {
         @Override
-        public Tweet createFromParcel(Parcel in) {
-            return new Tweet(in);
+        public Tweet createFromParcel(Parcel source) {
+            return new Tweet(source);
         }
 
-        // We just need to copy this and change the type to match our class.
         @Override
         public Tweet[] newArray(int size) {
             return new Tweet[size];
         }
     };
-
 }

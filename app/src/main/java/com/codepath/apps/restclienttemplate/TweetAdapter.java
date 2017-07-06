@@ -10,11 +10,17 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONObject;
 
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by dalyadickstein on 6/26/17.
@@ -25,6 +31,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     private List<Tweet> mTweets;
     private Context context;
     private TweetAdapterListener mListener;
+    private TwitterClient client;
 
     // define an interface required by the adapter so that user can click on a tweet (a row)
     // and be brought to the poster's user page
@@ -36,6 +43,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     public TweetAdapter(List<Tweet> tweets, TweetAdapterListener listener) {
         mTweets = tweets;
         mListener = listener;
+        client = TwitterApp.getRestClient();
     }
 
     // for each row, inflate the layout and cache references into the ViewHolder
@@ -138,10 +146,32 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             favoriteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Long tweetId = tweet.uid;
-                    Log.d("TweetAdapter", String.valueOf(tweetId));
+                    clickedFavoriteBtn(tweet);
                 }
             });
+        }
+
+        public void clickedFavoriteBtn(final Tweet tweet) {
+            String tweetId = Long.toString(tweet.uid);
+            Log.d("TweetAdapter", tweetId);
+            if (tweet.favorited) {
+                client.unfavorite(tweetId, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        Toast.makeText(context, "Unfavorited", Toast.LENGTH_LONG).show();
+                        tweet.favorited = false;
+                    }
+                });
+            } else {
+                client.favorite(tweetId, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(
+                    int statusCode, Header[] headers, JSONObject response) {
+                        Toast.makeText(context, "Favorited", Toast.LENGTH_LONG).show();
+                        tweet.favorited = true;
+                    }
+                });
+            }
         }
 
     }

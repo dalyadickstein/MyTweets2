@@ -71,6 +71,11 @@ public class TweetsListFragment extends Fragment implements TweetAdapter.TweetAd
         return view;
     }
 
+    // when the user swipes to refresh - method to be overridden in subclasses!
+    public void refreshView() {
+        Log.i("TweetsListFragment", "Swipe-refreshed");
+    }
+
     public void addItems(JSONArray response) {
         tweetAdapter.clear();
         // for each entry in response, deserialize the JSON object
@@ -89,20 +94,18 @@ public class TweetsListFragment extends Fragment implements TweetAdapter.TweetAd
         }
     }
 
+    // manually insert a tweet into the list of tweets
     public void addTweet(Tweet tweet) {
         tweets.add(0, tweet);
         tweetAdapter.notifyItemInserted(0);
         rvTweets.scrollToPosition(0);
     }
 
+    // when the user clicks on a tweet in the tweets list
     @Override
     public void onItemSelected(View view, int position) {
         Tweet tweet = tweets.get(position);
         ((TweetSelectedListener) getActivity()).onTweetSelected(tweet);
-    }
-
-    public void refreshView() {
-        Log.i("TWEETS_LIST_FRAGMENT", "Swipe-refreshed");
     }
 
 }
