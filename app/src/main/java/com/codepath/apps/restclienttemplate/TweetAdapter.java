@@ -71,6 +71,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         Glide.with(context).load(tweet.user.profileImageUrl).into(holder.ivProfileImage);
         holder.addListenerOnReplyClick(tweet, holder.btReply);
         holder.addListenerOnFavoriteClick(tweet, holder.btFavorite);
+        holder.addListenerOnProfilePicClick(tweet, holder.ivProfileImage);
     }
 
     @Override
@@ -126,6 +127,15 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                         // fire listener callback
                         mListener.onItemSelected(v, position);
                     }
+                }
+            });
+        }
+
+        public void addListenerOnProfilePicClick(final Tweet tweet, ImageView ivProfileImage) {
+            ivProfileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((TimelineActivity)context).launchProfileView(tweet.user.screenName);
                 }
             });
         }

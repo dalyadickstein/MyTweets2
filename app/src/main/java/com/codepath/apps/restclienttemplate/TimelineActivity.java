@@ -55,7 +55,8 @@ TweetsListFragment.TweetSelectedListener {
 
     @Override
     public void onTweetSelected(Tweet tweet) {
-        launchProfileView(tweet.user.screenName);
+        // launchDetailView(tweet), or the logic behind it
+        //Intent i = new Intent(TimelineActivity.this, DetailActivity.class);
     }
 
     // launch sub-activity ProfileActivity
